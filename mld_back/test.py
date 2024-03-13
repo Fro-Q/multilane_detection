@@ -256,13 +256,24 @@ def get_all_lines_from_per(lines, width, height, cur_left_x, cur_right_x):
 
 # 实现
 
-input_image = mpimg.imread("test_3.jpg")
+input_image = mpimg.imread("test/test_2.jpg")
 
 gray_img = grayscale(input_image)
+
+plt.imshow(gray_img, cmap="gray")
+plt.show()
+
 blur_img = gaussian_blur(gray_img, 5)
+
+plt.imshow(blur_img, cmap="gray")
+plt.show()
+
 height, width = blur_img.shape
 
 edges = canny(blur_img, 50, 150)
+
+plt.imshow(edges, cmap="gray")
+plt.show()
 
 # 显示图片
 
@@ -276,10 +287,8 @@ all_lines_mask = np.array(
 )
 all_lines_img = canny(region_of_interest(edges, all_lines_mask), 50, 150)
 
-# 显示图片
-
-# plt.imshow(blur_img)
-# plt.imshow(all_lines_img)
+plt.imshow(all_lines_img, cmap="gray")
+plt.show()
 
 # 当前车道线的梯形掩膜
 cur_bound_lt = (width * 0.1, height)
@@ -291,6 +300,9 @@ cur_lines_mask = np.array(
 )
 cur_lines_img = canny(region_of_interest(edges, cur_lines_mask), 50, 150)
 
+plt.imshow(cur_lines_img, cmap="gray")
+plt.show()
+
 # 显示图片
 
 # plt.imshow(cur_lines_img)
@@ -298,6 +310,9 @@ cur_lines_img = canny(region_of_interest(edges, cur_lines_mask), 50, 150)
 # 获取当前车道线
 
 cur_lines = get_cur_lines(hough_lines(cur_lines_img, 1, np.pi / 180, 15, 50, 20))
+
+plt.imshow(cur_lines_img, cmap="gray")
+plt.show()
 
 # all_lines = get_all_lines(
 #     hough_lines(all_lines_img, 1, np.pi / 180, 15, 100, 20),
@@ -324,7 +339,8 @@ dst = np.float32(
 M = cv2.getPerspectiveTransform(src, dst)
 warped = cv2.warpPerspective(input_image, M, (width, height), flags=cv2.INTER_LINEAR)
 
-# plt.imshow(warped)
+plt.imshow(warped)
+plt.show()
 
 per_grayscale = grayscale(warped)
 per_edges = canny(per_grayscale, 50, 150)
@@ -338,14 +354,19 @@ all_left_lines, all_right_lines, left_line, right_line = get_all_lines_from_per(
 )
 
 
-per_all_lines_img = np.zeros((height, width, 3), dtype=np.uint8)
-# for line in all_left_lines:
-#     for x1, y1, x2, y2 in line:
-#         cv2.line(per_all_lines_img, (x1, y1), (x2, y2), [255, 0, 0], 2)
+per_all_lines_set_img = np.zeros((height, width, 3), dtype=np.uint8)
+for line in all_left_lines:
+    for x1, y1, x2, y2 in line:
+        cv2.line(per_all_lines_set_img, (x1, y1), (x2, y2), [255, 0, 0], 2)
 
-# for line in all_right_lines:
-#     for x1, y1, x2, y2 in line:
-#         cv2.line(per_all_lines_img, (x1, y1), (x2, y2), [0, 0, 255], 2)
+for line in all_right_lines:
+    for x1, y1, x2, y2 in line:
+        cv2.line(per_all_lines_set_img, (x1, y1), (x2, y2), [0, 0, 255], 2)
+
+plt.imshow(per_all_lines_set_img)
+plt.show()
+
+per_all_lines_img = np.zeros((height, width, 3), dtype=np.uint8)
 
 # 绘制左右车道线
 if not np.isnan(left_line[0]) and not np.isnan(left_line[2]):
@@ -353,7 +374,7 @@ if not np.isnan(left_line[0]) and not np.isnan(left_line[2]):
         per_all_lines_img,
         (int(left_line[0]), int(left_line[1])),
         (int(left_line[2]), int(left_line[3])),
-        [0, 255, 0],
+        [0, 0, 255],
         10,
     )
 if not np.isnan(right_line[0]) and not np.isnan(right_line[2]):
@@ -361,12 +382,13 @@ if not np.isnan(right_line[0]) and not np.isnan(right_line[2]):
         per_all_lines_img,
         (int(right_line[0]), int(right_line[1])),
         (int(right_line[2]), int(right_line[3])),
-        [0, 255, 0],
+        [255, 0, 0],
         10,
     )
 
 
-# plt.imshow(per_all_lines_img)
+plt.imshow(per_all_lines_img)
+plt.show()
 
 # 反透视变换
 
@@ -375,6 +397,9 @@ reM = cv2.getPerspectiveTransform(dst, src)
 per_all_lines_img = cv2.warpPerspective(
     per_all_lines_img, reM, (width, height), flags=cv2.INTER_LINEAR
 )
+
+plt.imshow(per_all_lines_img)
+plt.show()
 
 # 显示图片
 
@@ -416,4 +441,4 @@ plt.show()
 
 # 保存图片
 
-cv2.imwrite("test_lines.jpg", combo)
+# cv2.imwrite("test_lines.jpg", combo)

@@ -69,6 +69,9 @@ def upload():
 
 def process_image(input_img):
     gray_img = grayscale(input_img)
+
+    # 保存灰度图
+
     blur_img = gaussian_blur(gray_img, 5)
     height, width = blur_img.shape
 
@@ -302,14 +305,14 @@ def get_cur_lines(lines, width, height):
 
     # 去除异常值
 
-    # left_k = np.array(left_k)
-    # left_b = np.array(left_b)
-    # right_k = np.array(right_k)
-    # right_b = np.array(right_b)
-    # left_k = left_k[np.abs(left_k - np.mean(left_k)) < 2 * np.std(left_k)]
-    # left_b = left_b[np.abs(left_b - np.mean(left_b)) < 2 * np.std(left_b)]
-    # right_k = right_k[np.abs(right_k - np.mean(right_k)) < 2 * np.std(right_k)]
-    # right_b = right_b[np.abs(right_b - np.mean(right_b)) < 2 * np.std(right_b)]
+    left_k = np.array(left_k)
+    left_b = np.array(left_b)
+    right_k = np.array(right_k)
+    right_b = np.array(right_b)
+    left_k = left_k[np.abs(left_k - np.mean(left_k)) < 2 * np.std(left_k)]
+    left_b = left_b[np.abs(left_b - np.mean(left_b)) < 2 * np.std(left_b)]
+    right_k = right_k[np.abs(right_k - np.mean(right_k)) < 2 * np.std(right_k)]
+    right_b = right_b[np.abs(right_b - np.mean(right_b)) < 2 * np.std(right_b)]
     # 去除斜率异常值
 
     # 计算左右车道线的斜率的均值
